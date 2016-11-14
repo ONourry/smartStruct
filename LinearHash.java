@@ -1,3 +1,4 @@
+import java.util.Collections;
 
 public class LinearHash<Key,Value>{
 	
@@ -140,6 +141,11 @@ public class LinearHash<Key,Value>{
 		return (key.hashCode() % this.sizeHash);
 	}
 	
+	public Enumeration<Key> getKeys(){
+		
+		Enumeration e = Collections.enumeration(keys);
+		return e;
+	}
 	
 	//Resize the hashtable
 	private void resize(int sizeHash){
