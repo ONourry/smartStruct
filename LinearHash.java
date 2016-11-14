@@ -8,7 +8,8 @@ public class LinearHash<Key,Value>{
 	private Value[] values;
 	
 	private final int DEFAULT_SIZE = 11;
-	private final double LOAD_FACTOR = 0.75
+	private final double LOAD_FACTOR_TOO_BIG = 0.75;
+	private final double LOAD_FACTOR_TOO_SMALL = 0.20;
 	
 	//Default constructor
 	public LinearHash(){
@@ -43,7 +44,7 @@ public class LinearHash<Key,Value>{
 		}
 		
 		//If we exceed the 0.75 load, double the size
-		if (( ((double)n) / ((double)m) ) > LOAD_FACTOR)
+		if (( ((double)this.nbrElements) / ((double)this.sizeHash) ) > LOAD_FACTOR_TOO_BIG)
 			resize(2*this.sizeHash);
 		
 		
@@ -53,6 +54,11 @@ public class LinearHash<Key,Value>{
 			int newIndex;
 			
 			for(newIndex = index; keys[newIndex] != null; i++){
+				
+				//Return to beginning of array and keep searching if last index has been reached
+				if(newIndex == keys.length - 1)
+					newIndex = 0;
+				
 				//Key already in hashtable, update value
 				if(keys[newIndex].equals(key)){
 					values[newIndex] = value;
@@ -68,6 +74,12 @@ public class LinearHash<Key,Value>{
 		}
 		
 		
+	}
+	
+	public boolean contains(Key key){
+		if(key == null)
+			throw new Exception("Invalid Key");
+		return get(key) != null;
 	}
 	
 	//Get the corresponding value of the key given in parameter
@@ -95,13 +107,26 @@ public class LinearHash<Key,Value>{
 		if(key == null)
 			throw new Exception("Invalid Key");
 		
+		if (!contains(key))
+			return;
+		
 		for(int i = hashKey(key); keys[i] != null; i++){
+			
+			//Return to beginning of array and keep searching if last index has been reached
+			if(i == keys.length - 1)
+				i = 0;
 			
 			if(keys[i].equals(key)){
 				keys[i] = "-1";
-				values[i] = null;
+				values[i] = "-1";
 			}
 		}
+		
+		this.sizeHash--;
+		
+		//Hash table has too much empty space, resize
+		if (( ((double)this.nbrElements) / ((double)this.sizeHash) ) < LOAD_FACTOR_TOO_SMALL)
+			resize(this.sizeHash/2);
 	}
 	
 	//Get hash code for the key
