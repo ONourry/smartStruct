@@ -55,15 +55,15 @@ public class LinearHash<Key,Value>{
 			
 			for(newIndex = index; keys[newIndex] != null; i++){
 				
-				//Return to beginning of array and keep searching if last index has been reached
-				if(newIndex == keys.length - 1)
-					newIndex = 0;
-				
 				//Key already in hashtable, update value
 				if(keys[newIndex].equals(key)){
 					values[newIndex] = value;
 					return;
-				} 
+				}
+				
+				//Return to beginning of array and keep searching if last index has been reached
+				if(newIndex == keys.length - 1)
+					newIndex = -1;
 			}
 			
 			//Adjust attributes
@@ -88,6 +88,8 @@ public class LinearHash<Key,Value>{
 			throw new Exception("Invalid Key");
 			
 		for(int i = hashKey(key); keys[i] != null; i++){
+			
+			
 			//There has been something there before but it was deleted, to avoid issues with the .equals method
 			if(keys[i] == ("-1"))
 				continue;
@@ -95,6 +97,10 @@ public class LinearHash<Key,Value>{
 			if(keys[i].equals(key)){
 				return values[i];
 			}
+			
+			//Return to beginning of array and keep searching if last index has been reached
+			if(i == keys.length - 1)
+				i = -1;
 		}
 		
 		//Couldnt find anything at the specified key
@@ -112,14 +118,14 @@ public class LinearHash<Key,Value>{
 		
 		for(int i = hashKey(key); keys[i] != null; i++){
 			
-			//Return to beginning of array and keep searching if last index has been reached
-			if(i == keys.length - 1)
-				i = 0;
-			
 			if(keys[i].equals(key)){
 				keys[i] = "-1";
 				values[i] = "-1";
 			}
+			
+			//Return to beginning of array and keep searching if last index has been reached
+			if(i == keys.length - 1)
+				i = -1;
 		}
 		
 		this.sizeHash--;
