@@ -1,9 +1,14 @@
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Hashtable;
 
 //Trees,Hash Tables, AVL tree, Binary Tree, sequence
 
 public class SmartULS {
-
+	
+	private int defaultTresholdULS = 1000;
+	private LinearHash struct = new LinearHash();
+	
+	
 	public SmartULS(){
 		
 	}
@@ -24,9 +29,13 @@ public class SmartULS {
 		
 		long randomKey = ThreadLocalRandom.current().nextLong(99999999);
 		
-		while (this.allKeys(this).contains((long)randomKey)){
-			
-			randomKey = ThreadLocalRandom.current().nextLong(99999999);
+		try {
+			while (this.struct.contains(randomKey)){
+				
+				randomKey = ThreadLocalRandom.current().nextLong(99999999);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		return randomKey;
@@ -37,7 +46,6 @@ public class SmartULS {
 	 * @param uls SmartULS object
 	 */
 	public void allKeys(SmartULS uls){
-		
 	}
 	
 	/**
@@ -64,6 +72,10 @@ public class SmartULS {
 	}
 	
 	public void rangeKey(long key1, long key2){
+		
+	}
+	
+	private void shift(Object structure){
 		
 	}
 }
