@@ -30,6 +30,9 @@ public class LinearHash<Key,Value>{
 		this.values = (Value[]) new Object[this.sizeHash];
 	}
 	
+	public int size(){
+		return this.nbrElements;
+	}
 	
 	//Put a value and a key in the hash table
 	public void put(Key key, Value value) throws Exception{
