@@ -3,26 +3,26 @@ import java.util.concurrent.ThreadLocalRandom;
 
 //Trees,Hash Tables, AVL tree, Binary Tree, sequence
 
-public class SmartULS<Long,Value> {
+public class SmartULS<Key,Value> {
 
-	private int tresholdULS = 1000;
+	private int tresholdULS = 10;
 	private TreeMap tree;
 	private Hashtable hashtable;
 	private int size;
 
 	public SmartULS() {
-		this.tree = new TreeMap<Long,Value>();
-		this.size = this.hashtable.size();
+		this.tree = new TreeMap<Key,Value>();
+		this.size = this.tree.size();
 	}
 
 	public SmartULS(int size) {
 		if (size >= this.tresholdULS) {
-			this.hashtable = new Hashtable<Long,Value>(size);
+			this.hashtable = new Hashtable<Key,Value>(size);
 			this.size = this.hashtable.size();
 		}
 
 		else {
-			this.tree = new TreeMap<Long,Value>();
+			this.tree = new TreeMap<Key,Value>();
 			this.size = this.tree.size();
 		}
 	}
@@ -49,23 +49,23 @@ public class SmartULS<Long,Value> {
 	/**
 	 * Randomly generates a new non-existing key of 8 digits
 	 * 
-	 * @return (long) key of 8 digits
+	 * @return (Integer) key of 8 digits
 	 */
-	public long generate() {
+	public int generate() {
 
-		long randomKey = ThreadLocalRandom.current().nextLong(99999999);
+		int randomKey = ThreadLocalRandom.current().nextInt(99999999);
 		
 		if(this.tree != null){
 			if(this.tree.containsKey(randomKey)){
 				while(this.tree.containsKey(randomKey)){
-					randomKey = ThreadLocalRandom.current().nextLong(99999999);
+					randomKey = ThreadLocalRandom.current().nextInt(99999999);
 				}
 			}
 		}
 		else if(this.hashtable != null){
 			if(this.hashtable.containsKey(randomKey)){
 				while(this.hashtable.containsKey(randomKey)){
-					randomKey = ThreadLocalRandom.current().nextLong(99999999);
+					randomKey = ThreadLocalRandom.current().nextInt(99999999);
 				}
 			}
 		}
@@ -87,7 +87,7 @@ public class SmartULS<Long,Value> {
 	 * @param uls
 	 *            SmartULS object
 	 */
-	public Set<Long> allKeys(SmartULSOLD uls) {
+	public Set<Key> allKeys(SmartULS uls) {
 		
 		if(this.tree == null && this.hashtable == null){
 			try {
@@ -102,9 +102,9 @@ public class SmartULS<Long,Value> {
 		}
 
 		else{
-			Set<Long> keys = this.hashtable.keySet();
+			Set<Key> keys = this.hashtable.keySet();
 			
-			TreeSet<Long> treeSet = new TreeSet<Long>();
+			TreeSet<Key> treeSet = new TreeSet<Key>();
 			treeSet.addAll(keys);
 			
 			keys = treeSet;
@@ -115,17 +115,20 @@ public class SmartULS<Long,Value> {
 	/**
 	 * add an entry for the given key and value
 	 * 
-	 * @param uls
+	 * @param structure
 	 *            SmartULS object
 	 * @param key
-	 *            (long) key to the value
+	 *            (Integer) key to the value
 	 * @param value
 	 *            (Object) object to be added with the specified key
 	 */
-	public void add(SmartULSOLD uls, long key, Value value) {
+	public void add(SmartULS structure, Key key, Value value) {
 
 		if (this.tree != null) {
 			this.tree.put(key, value);
+			if (this.tree.size() >= this.tresholdULS){
+				this.shift();
+			}
 		}
 
 		else if (this.hashtable != null) {
@@ -148,7 +151,7 @@ public class SmartULS<Long,Value> {
 	 * @param key
 	 * @param value
 	 */
-	public void remove(SmartULSOLD uls, long key, Value value) {
+	public void remove(SmartULS uls, Key key, Value value) {
 		
 		if (this.tree != null) {
 			this.tree.remove(key, value);
@@ -156,6 +159,9 @@ public class SmartULS<Long,Value> {
 
 		else if (this.hashtable != null) {
 			this.hashtable.remove(key, value);
+			if (this.hashtable.size() < this.tresholdULS){
+				this.shift();
+			}
 		}
 		
 		else {
@@ -174,7 +180,7 @@ public class SmartULS<Long,Value> {
 	 * @param key
 	 * @return
 	 */
-	public Value getValues(SmartULSOLD uls, long key) {
+	public Value getValues(SmartULS uls, Key key) {
 		
 		if(this.tree == null && this.hashtable == null){
 			try {
@@ -199,7 +205,7 @@ public class SmartULS<Long,Value> {
 	 * @param key
 	 * @return
 	 */
-	public long nextKey(SmartULSOLD uls, long key) {
+	public Key nextKey(SmartULS uls, Key key) {
 		
 		if(this.tree == null && this.hashtable == null){
 			try {
@@ -210,19 +216,20 @@ public class SmartULS<Long,Value> {
 		}
 		
 		if (this.tree != null) {
-			return (long)this.tree.ceilingKey(key);
+			System.out.println("Getting next key from tree");
+			return (Key) this.tree.higherKey(key);	
 		}
 		
 		else{
-			
-			Long[] myKeys = (Long[]) this.hashtable.keySet().toArray();
+			System.out.println("Getting next key from Hashtable");
+			Key[] myKeys = (Key[]) this.hashtable.keySet().toArray();
 			
 			//This method uses Quicksort
 			Arrays.sort(myKeys);
 			
 			int keyIndex = Arrays.binarySearch(myKeys, key);
 			
-			return ((long)keyIndex + 1);
+			return (myKeys[keyIndex + 1]);
 		}
 	}
 
@@ -232,7 +239,7 @@ public class SmartULS<Long,Value> {
 	 * @param key
 	 * @return
 	 */
-	public long prevKey(SmartULSOLD uls, long key) {
+	public Key prevKey(SmartULS uls, Key key) {
 		
 
 		if(this.tree == null && this.hashtable == null){
@@ -244,18 +251,18 @@ public class SmartULS<Long,Value> {
 		}
 		
 		if (this.tree != null) {
-			return (long) this.tree.floorKey(key);
+			return (Key) this.tree.lowerKey(key);
 		}
 		
 		else{
-			Long[] myKeys = (Long[]) this.hashtable.keySet().toArray();
+			Key[] myKeys = (Key[]) this.hashtable.keySet().toArray();
 			
 			//This method uses Quicksort
 			Arrays.sort(myKeys);
 			
 			int keyIndex = Arrays.binarySearch(myKeys, key);
 			
-			return ((long)keyIndex -1);
+			return (myKeys[keyIndex -1]);
 		}
 		
 		
@@ -267,7 +274,7 @@ public class SmartULS<Long,Value> {
 	 * @param key2
 	 * @return
 	 */
-	public Set rangeKey(long key1, long key2) {
+	public int rangeKey(Key key1, Key key2) {
 		
 		if(this.tree == null && this.hashtable == null){
 			try {
@@ -277,15 +284,29 @@ public class SmartULS<Long,Value> {
 			}
 		}
 		
+		//First element is included, -1 required
 		if(this.tree != null){
-			return this.tree.subMap(key1, key2).keySet();
+			return this.tree.subMap(key1, key2).keySet().size() - 1;
 		}
 		
 		else {
-			TreeMap myKeys = (TreeMap) this.hashtable.keySet();
+			Key[] myKeys =  (Key[]) this.hashtable.keySet().toArray();
 			
-			return (Set) myKeys.subMap(key1, key2);
+			Arrays.sort(myKeys);
+			int keyIndex = Arrays.binarySearch(myKeys, key1);
+			int nbrEntries = 0;
+			/*
+			for(int i = keyIndex; !(myKeys[keyIndex].equals(myKeys[(int)key2])); i++){
+				nbrEntries++;
+			}*/
 			
+			int currentIndex = keyIndex;
+			while(myKeys[currentIndex].equals((int)key2) == false){
+				nbrEntries++;
+				currentIndex++;
+			}
+			//Current value is key2, -1 required
+			return nbrEntries - 1;
 		}
 	}
 
@@ -298,27 +319,30 @@ public class SmartULS<Long,Value> {
 	private void shift() {
 		
 		if(this.tree != null){
-			Set<Long> keys = this.tree.keySet();
+			System.out.println("Shifting from tree to hashtable");
+			Set<Key> keys = this.tree.keySet();
 			
-			this.hashtable = new Hashtable<Long,Object>(this.tree.size());
+			this.hashtable = new Hashtable<Key,Value>(this.tree.size());
 			
-			for(Long key : keys){
-				this.hashtable.put((long)key, this.tree.get((long)key));
+			for(Key key : keys){
+				this.hashtable.put((int)key, this.tree.get((int)key));
 			}
 			
 			this.tree = null;
 		}
 		
 		else if(this.hashtable != null){
-			Set<Long> keys = this.hashtable.keySet();
+			System.out.println("Shifting from hashtable to tree");
+			Set<Key> keys = this.hashtable.keySet();
 			
-			this.tree = new TreeMap<Long,Object>();
+			this.tree = new TreeMap<Key,Value>();
 			
-			for(Long key : keys){
-				this.tree.put((long)key, this.hashtable.get((long)key));
+			for(Key key : keys){
+				this.tree.put((int)key, this.hashtable.get((int)key));
 			}
 			
 			this.hashtable = null;
 		}
 	}
+
 }
