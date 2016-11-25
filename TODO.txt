@@ -1,9 +1,0 @@
-modify method get in LinearHash to return ALL values of a single key
-
-pick sorting algorithm for allKeys()
-
-finish add() with the cast on value
-
-check with the compiler how to get the value at iterator position
-
-Find way to copy all values and key into new structure for shift()

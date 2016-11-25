@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class LinearHash{
+public class LinearHash<Key,Value>{
 	
 	private int nbrElements;
 	private int sizeHash;
@@ -9,16 +9,16 @@ public class LinearHash{
 	private final double LOAD_FACTOR_TOO_BIG = 0.75;
 	private final double LOAD_FACTOR_TOO_SMALL = 0.20;
 	
-	private Object[] keys;
-	private Object[] values;
+	private Key[] keys;
+	private Value[] values;
 	
 	//Default constructor
 	public LinearHash(){
 		this.sizeHash = this.DEFAULT_SIZE;
 		this.nbrElements = 0;
 		
-		this.keys = new Object [this.DEFAULT_SIZE];
-		this.values =  new Object[this.DEFAULT_SIZE];
+		this.keys = (Key[]) new Object [this.DEFAULT_SIZE];
+		this.values =  (Value[]) new Object[this.DEFAULT_SIZE];
 	}
 	
 	//Constructor taking a size as argument
@@ -26,8 +26,8 @@ public class LinearHash{
 		this.sizeHash = size;
 		this.nbrElements = 0;
 		
-		this.keys =  new Object[this.sizeHash];
-		this.values = new Object[this.sizeHash];
+		this.keys =  (Key[]) new Object[this.sizeHash];
+		this.values = (Value[]) new Object[this.sizeHash];
 	}
 	
 	public int size(){
@@ -35,7 +35,7 @@ public class LinearHash{
 	}
 	
 	//Put a value and a key in the hash table
-	public void put(Object key, Object value){
+	public void put(Key key, Value value){
 		//Invalid key
 		try{
 			if(key == null)
@@ -89,7 +89,7 @@ public class LinearHash{
 		
 	}
 	
-	public boolean contains (Object key){
+	public boolean contains (Key key){
 		try{
 			if(key == null)
 				throw new Exception("Invalid Key");
@@ -101,7 +101,7 @@ public class LinearHash{
 	}
 	
 	//Get the corresponding value of the key given in parameter
-	public Object get(Object key){
+	public Value get(Key key){
 		try{
 			if(key == null)
 				throw new Exception("Invalid Key");
@@ -130,7 +130,7 @@ public class LinearHash{
 	}
 	
 	//Remove a key (Set to -1) from the hashtable and set the value to null
-	public void remove(Object key){
+	public void remove(Key key){
 		try{
 			if(key == null)
 				throw new Exception("Invalid Key");
@@ -144,8 +144,8 @@ public class LinearHash{
 		for(int i = hashKey(key); keys[i] != null; i++){
 			//-----------------------------------------------------------------------replace by empty object??
 			if(keys[i].equals(key)){
-				keys[i] = ("-1");
-				values[i] = ("-1");
+				keys[i] = null;
+				values[i] = null;
 			}
 			
 			//Return to beginning of array and keep searching if last index has been reached
@@ -161,22 +161,22 @@ public class LinearHash{
 	}
 	
 	//Get hash code for the key
-	private int hashKey(Object key){
+	private int hashKey(Key key){
 		return (key.hashCode() % this.sizeHash);
 	}
 	
 		
-	public Set<Object> keySet(){
-		Set<Object> keySet = new HashSet<Object>(Arrays.asList(keys));
+	public Set<Key> keySet(){
+		Set<Key> keySet = new HashSet<Key>(Arrays.asList(keys));
 		
 		return keySet;
 	}
 	
 	//Resize the hashtable
 	private void resize(int sizeHash){
-		LinearHash newHash = new LinearHash(sizeHash);
+		LinearHash newHash = new LinearHash<Key,Value>(sizeHash);
 		
-		for(Object key : this.keySet()){
+		for(Key key : this.keySet()){
 			try {
 				newHash.put(key, this.get(key));
 			} catch (Exception e) {
@@ -184,8 +184,8 @@ public class LinearHash{
 			}
 		}
 		
-		this.keys = newHash.keys;
-		this.values = newHash.values;
+		this.keys = (Key[]) newHash.keys;
+		this.values = (Value[]) newHash.values;
 		this.sizeHash = newHash.sizeHash;
 	}
 }
