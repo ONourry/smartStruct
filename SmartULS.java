@@ -156,13 +156,34 @@ public class SmartULS<Key,Value> {
 	public void remove(SmartULS uls, Key key, Value value) {
 		
 		if (this.tree != null) {
-			this.tree.remove(key, value);
-			this.size--;
+			if(this.tree.containsKey(key) && this.tree.get(key).equals(value)){
+				this.tree.remove(key);
+				this.size--;
+			}
+			else{
+				try {
+					throw new Exception("Cannot remove, Invalid Key or Value");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
 		}
 
 		else if (this.hashtable != null) {
-			this.hashtable.remove(key, value);
-			this.size--;
+			
+			if(this.hashtable.containsKey(key) && this.hashtable.get(key).equals(value)){
+				this.hashtable.remove(key);
+				this.size--;
+			}
+			else{
+				try {
+					throw new Exception("Cannot remove, Invalid Key or Value");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
 			if (this.size < this.tresholdULS){
 				this.shift();
 			}
@@ -233,7 +254,12 @@ public class SmartULS<Key,Value> {
 			
 			int keyIndex = Arrays.binarySearch(myKeys, key);
 			
-			return (myKeys[keyIndex + 1]);
+			if(keyIndex == myKeys.length - 1){
+				return null;
+			}
+			else{
+				return (myKeys[keyIndex + 1]);
+			}
 		}
 	}
 
@@ -291,29 +317,62 @@ public class SmartULS<Key,Value> {
 		
 		//First element is included, -1 required
 		else if(this.tree != null && this.tree.containsKey(key1) && this.tree.containsKey(key2)){
-			return this.tree.subMap(key1, key2).keySet().size() - 1;	
-			
+			if((Integer)key2 > (Integer)key1){
+				return this.tree.subMap(key1, key2).keySet().size() - 1;	
+			}
+			else{
+				return this.tree.subMap(key2, key1).keySet().size() - 1;
+			}
 		}
 		
 		else if(this.hashtable != null && this.hashtable.containsKey(key1) && this.hashtable.containsKey(key2)) {
 				Key[] myKeys =  (Key[]) this.hashtable.keySet().toArray();
 				
+				//MergeSort
 				Arrays.sort(myKeys,0,myKeys.length-1);
-				//Arrays.sort(myKeys);
-				int keyIndex = Arrays.binarySearch(myKeys, key1);
+
+				int keyIndex = 0;
 				int nbrEntries = 0;
-				/*
-				for(int i = keyIndex; !(myKeys[keyIndex].equals(myKeys[(int)key2])); i++){
-					nbrEntries++;
-				}*/
 				
-				int currentIndex = keyIndex;
-				while(myKeys[currentIndex].equals(key2) == false){
-					nbrEntries++;
-					currentIndex++;
+				//Key2 > Key1
+				if((Integer)key2 > (Integer)key1){
+					System.out.println("OPTION 1");
+					keyIndex = Arrays.binarySearch(myKeys,key1);
+					System.out.println("Index of " + key1 + ", " + keyIndex);
+					//Key 2 is the next key in the last, nothing in between
+					if(myKeys[keyIndex + 1].equals(key2)){
+						return 0;
+					}
+					
+					int currentIndex = keyIndex;
+					while(myKeys[currentIndex].equals(key2) == false){
+						System.out.println("\t" + myKeys[currentIndex]);
+						nbrEntries++;
+						currentIndex++;
+					}
+				} 
+				//Key1 > Key2
+				else{
+					System.out.println("OPTION 2");
+					keyIndex = Arrays.binarySearch(myKeys,key2);
+					System.out.println("Index of " + key2 + ", " + keyIndex);
+					if(myKeys[keyIndex + 1].equals(key1)){
+						return 0;
+					}
+					
+					//Start at first element after key1
+					int currentIndex = keyIndex;
+					while(myKeys[currentIndex].equals(key1) == false){
+						System.out.println("\t" + myKeys[currentIndex]);
+						nbrEntries++;
+						currentIndex++;
+					}
 				}
+				
+				
+				
 				//Current value is key2, -1 required
-				return nbrEntries - 1;
+				return nbrEntries;
 			
 		}
 		
@@ -321,7 +380,6 @@ public class SmartULS<Key,Value> {
 			try {
 				throw new Exception("Invalid Key");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.getMessage();
 			}
 		}
