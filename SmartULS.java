@@ -331,14 +331,15 @@ public class SmartULS<Key,Value> {
 				//MergeSort
 				Arrays.sort(myKeys,0,myKeys.length-1);
 
+				
 				int keyIndex = 0;
 				int nbrEntries = 0;
 				
 				//Key2 > Key1
 				if((Integer)key2 > (Integer)key1){
-					System.out.println("OPTION 1");
+					
 					keyIndex = Arrays.binarySearch(myKeys,key1);
-					System.out.println("Index of " + key1 + ", " + keyIndex);
+					
 					//Key 2 is the next key in the last, nothing in between
 					if(myKeys[keyIndex + 1].equals(key2)){
 						return 0;
@@ -346,16 +347,16 @@ public class SmartULS<Key,Value> {
 					
 					int currentIndex = keyIndex;
 					while(myKeys[currentIndex].equals(key2) == false){
-						System.out.println("\t" + myKeys[currentIndex]);
+					
 						nbrEntries++;
 						currentIndex++;
 					}
 				} 
 				//Key1 > Key2
 				else{
-					System.out.println("OPTION 2");
+					
 					keyIndex = Arrays.binarySearch(myKeys,key2);
-					System.out.println("Index of " + key2 + ", " + keyIndex);
+					
 					if(myKeys[keyIndex + 1].equals(key1)){
 						return 0;
 					}
@@ -363,7 +364,7 @@ public class SmartULS<Key,Value> {
 					//Start at first element after key1
 					int currentIndex = keyIndex;
 					while(myKeys[currentIndex].equals(key1) == false){
-						System.out.println("\t" + myKeys[currentIndex]);
+						
 						nbrEntries++;
 						currentIndex++;
 					}

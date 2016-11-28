@@ -59,17 +59,14 @@ public class TestSmartULS {
 		
 		//MANUAL TESTING--------------------------------------------------------------------------------
 		
-		System.out.println("CHANGING THRESHOLD VALUE TO 0...");
-		structure.setSmartThresholdULS(0);
 		
-		structure.add(structure, 1000,"John");
-		structure.add(structure, 1001,"Mary");
-		structure.add(structure, 1019,"Adam");
-		structure.add(structure, 1017,"Harold");
-		structure.add(structure, 11200,"Lobster");
-		//structure.add(structure, 1007,"Ham");
-		structure.add(structure, 1005,"Melissandre");
-		structure.add(structure, 1002,"Captain Krabs");
+		int nbrOfObjects = 100;
+		int counter = 0;
+		while(counter < nbrOfObjects){
+			String aString = "Object" + counter;
+			structure.add(structure, structure.generate(), aString);
+			counter++;
+		}
 		
 		int randomKey1 = getRandomKey(structure);
 		int randomKey2 = getRandomKey(structure);
@@ -84,9 +81,10 @@ public class TestSmartULS {
 		System.out.println(randomKey2);
 		testStructure(structure,randomKey1,randomKey2);
 		
-		System.out.println("Removing Key: " + randomKey1);
-		structure.remove(structure, randomKey1, structure.getValues(structure, randomKey1));
-		
+	
+		int threshold = 50;
+		structure.setSmartThresholdULS(threshold);
+		System.out.println("CHANGING THRESHOLD VALUE TO " + threshold);
 		
 		randomKey1 = getRandomKey(structure);
 		randomKey2 = getRandomKey(structure);
@@ -95,58 +93,24 @@ public class TestSmartULS {
 			randomKey2 = getRandomKey(structure);
 		}
 		
-		System.out.println("FIRST SET OF TEST");
+		System.out.println("SECOND SET OF TEST  WITH NEW THRESHOLD");
 		System.out.println("RANDOM KEYS TO USE FOR TESTING");
 		System.out.println(randomKey1);
 		System.out.println(randomKey2);
 		testStructure(structure,randomKey1,randomKey2);
 		
-		
-		/*
-		structure.add(structure, 1003,"Patrick");
-		structure.add(structure, 1004,"Sandy");
-		structure.add(structure, 1006,"Senor Juan");
-		
-		
-		randomKey1 = getRandomKey(structure);
-		randomKey2 = getRandomKey(structure);
-		
-		while(randomKey1 == randomKey2){
-			randomKey2 = getRandomKey(structure);
-		}
-		
-		System.out.println("SECOND SET OF TEST");
-		System.out.println("New set of keys " + randomKey1);
-		System.out.println("New set of keys " + randomKey2);
-		testStructure(structure,randomKey1,randomKey2);
-
-		structure.remove(structure, 1005,"Melissandre");
-		structure.remove(structure, 1017,"Harold");
-		
-		randomKey1 = getRandomKey(structure);
-		randomKey2 = getRandomKey(structure);
-		
-		while(randomKey1 == randomKey2){
-			randomKey2 = getRandomKey(structure);
-		}
-		
-		System.out.println("LAST SET OF TEST");
-		System.out.println("New set of keys " + randomKey1);
-		System.out.println("New set of keys " + randomKey2);
-		testStructure(structure,randomKey1,randomKey2);
-		*/
 	}
 	
 	//Call existing methods from the SmartULS structure to test its functionalities
 	private static void testStructure(SmartULS structure,int key1,int key2){
 		
-		Set<Integer> myKeys = structure.allKeys(structure);
+		/*Set<Integer> myKeys = structure.allKeys(structure);
 		
 		System.out.println("Current elements in structure");
 		for (Integer key: myKeys){
 			System.out.println("Key: " + key + "  Value: " + structure.getValues(structure, key));
 		}
-		
+		*/
 		System.out.println("CURRENT SIZE OF THE STRUCTURE " + structure.getSize());
 		
 		System.out.println("NEXT AND PREVIOUS KEY OF KEY " + key1);
